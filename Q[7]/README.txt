@@ -1,7 +1,7 @@
 To compile the sourcecode:
-gcc Q7.c -o task1
+gcc Q7.c -o Q7
 to execute
-./task1
+./Q7
 
 To run the code from the makefile:
 make run                // runs the file,
