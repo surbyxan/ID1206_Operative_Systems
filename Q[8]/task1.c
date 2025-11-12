@@ -7,7 +7,7 @@
 #define BUFSIZE 100
 
 int main() {
-    int *arr ; //todo malloc this
+    int *arr ; 
 	arr = (int *)malloc(N * sizeof(int));
 	int i;
     clock_t start, end;
