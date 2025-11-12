@@ -4,20 +4,21 @@
 #include <stdlib.h>
 #include <time.h>
 
+
 #define BUFSIZE 100
 #define N 1000000
 
 int main() {
-    int arr [N]; //todo malloc this
+    int *arr ; //todo malloc this
+	arr = (int *)malloc(N * sizeof(int));
 	int i;
     clock_t start, end;
     double cpu_time_used;
 	int fd[2]; //! read 0 write 1 assertions
 	pipe(fd); //! creating pipe
-	for (i = 0; i < N; i++)
-	{
-		arr [i] = rand() % 2;
-        
+
+	for (i = 0; i < N; i++) {
+		arr [i] = rand() % 2;    
 	}
 
     start = clock();
@@ -32,6 +33,7 @@ int main() {
 		close(fd[0]);
 		write(fd[1], &sum, sizeof(sum));
 		close(fd[1]);
+		free(arr);
 		exit(0);
 	}
 
@@ -45,23 +47,25 @@ int main() {
 		close(fd[0]);
 		write(fd[1], &sum, sizeof(sum));
 		close(fd[1]);
+		free(arr);
 		exit(0);
 	}
     
 	//! parent
-        int sum1;
-        int sum2;
-        wait();
-        wait();
-        read(fd[0], &sum1, sizeof(sum1));
-        read(fd[0], &sum2, sizeof(sum2));
-		printf("im parent, sum1 is %d, sum2 is %d\n", sum1, sum2);
-        
-        printf("Total sum: %d\n", sum1 + sum2);
+    int sum1;
+    int sum2;
+    wait();
+    wait();
+    read(fd[0], &sum1, sizeof(sum1));
+    read(fd[0], &sum2, sizeof(sum2));
+	printf("im parent, sum1 is %d, sum2 is %d\n", sum1, sum2);
+    
+    printf("Total sum: %d\n", sum1 + sum2);
     
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
     printf("Time taken: %.2f microseconds (μs)\n", cpu_time_used* 1000000.0); //! in microseconds
 
+	free(arr);
     return 0;
 }
