@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-
 #define BUFSIZE 100
 
 int main() {
