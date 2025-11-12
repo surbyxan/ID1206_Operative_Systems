@@ -4,5 +4,5 @@ to execute
 ./Q7
 
 To run the code from the makefile:
-make run                // runs the file,
+make run                // complies and executes the file,
 make clean             // cleans up the compiled file
