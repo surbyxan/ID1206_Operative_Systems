@@ -1,6 +1,7 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -Wextra -O2
+N = 100  # default value
+CFLAGS = -DN=$(N)
 
 # Target executable
 TARGET = main
