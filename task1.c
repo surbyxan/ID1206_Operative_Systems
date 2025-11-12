@@ -2,13 +2,16 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define BUFSIZE 100
-#define N 100
+#define N 1000000
 
 int main() {
-    int arr [N]; //! malloc this
+    int arr [N]; //todo malloc this
 	int i;
+    clock_t start, end;
+    double cpu_time_used;
 	int fd[2]; //! read 0 write 1 assertions
 	pipe(fd); //! creating pipe
 	for (i = 0; i < N; i++)
@@ -17,9 +20,8 @@ int main() {
         
 	}
 
-
-	int pid = fork(); //! child 1
-	int pid2 = fork(); //! child 2
+    start = clock();
+	int pid= fork(); //! child 1
 
 	if (pid == 0) {//! child 1
 		int sum = 0;
@@ -30,8 +32,11 @@ int main() {
 		close(fd[0]);
 		write(fd[1], &sum, sizeof(sum));
 		close(fd[1]);
+		exit(0);
 	}
-	else if (pid2 == 0){ //! child 2
+
+	int pid2 = fork();
+	if (pid2 == 0){ //! child 2
         int sum = 0;
         for (i = N/2; i < N; i++) {
             sum += arr[i];
@@ -40,18 +45,23 @@ int main() {
 		close(fd[0]);
 		write(fd[1], &sum, sizeof(sum));
 		close(fd[1]);
+		exit(0);
 	}
-    else { //! parent
+    
+	//! parent
         int sum1;
         int sum2;
         wait();
         wait();
-        read(fd[0], sum1, sizeof(sum1));
-        read(fd[0], sum2, sizeof(sum2));
+        read(fd[0], &sum1, sizeof(sum1));
+        read(fd[0], &sum2, sizeof(sum2));
 		printf("im parent, sum1 is %d, sum2 is %d\n", sum1, sum2);
         
         printf("Total sum: %d\n", sum1 + sum2);
-        
-    }
     
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("Time taken: %.2f microseconds (μs)\n", cpu_time_used* 1000000.0); //! in microseconds
+
+    return 0;
 }
