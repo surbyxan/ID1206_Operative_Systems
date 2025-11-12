@@ -6,7 +6,6 @@
 
 
 #define BUFSIZE 100
-#define N 1000000
 
 int main() {
     int *arr ; //todo malloc this

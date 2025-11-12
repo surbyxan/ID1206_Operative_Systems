@@ -7,14 +7,14 @@ CFLAGS = -DN=$(N)
 TARGET = main
 
 # Default build
-all: $(TARGET)
+all: clean $(TARGET)
 
 # Build rule
 $(TARGET): task1.c
 	$(CC) $(CFLAGS) -o $(TARGET) task1.c
 
 # Run program
-run: $(TARGET)
+run: clean $(TARGET)
 	./$(TARGET)
 
 # Clean build files
