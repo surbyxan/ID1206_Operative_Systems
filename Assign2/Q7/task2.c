@@ -7,6 +7,7 @@
 int num_threads = 0;
 int strip_size;
 float *array; 
+int bins = 30;
 
 void *thread_func(void *arg); /* the thread function */
 
@@ -22,34 +23,43 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < array_size; i++) {
 		array [i] = (double)rand() / RAND_MAX;
 	}
-/* Perform Serial Sum */
-	float sum_serial = 0.0;
+
 	double time_serial = 0.0;
     
     clock_t start, end;
 
 	int i;
-    int bins = 30;
-    int hist[bins];
+    int serial_hist[bins];
 
-    start = clock(); /* Master thread adding the array*/
-	for (i = 0; i < array_size; i++)
-	{
-		sum_serial += array[i];
-	}
-	
-	    
+    for (int i = 0; i < bins; i++) {
+        serial_hist[i] = 0;
+    }
+
+    start = clock(); /* Master thread adding the array into a histogram*/
+    for (int i = 0; i < array_size; i++) {
+        int bin = (int)(array[i] * bins);  
+ 
+        if (bin == bins) {
+            bin = bins - 1;
+        }
+
+    serial_hist[bin]++; 
+    }   
 //Timer Begin
     end = clock();
     time_serial = ((double) (end - start)) / CLOCKS_PER_SEC;
-//Timer End
-	printf("Serial Sum = %.3f, time = %.3f \n", sum_serial, time_serial);
+	printf("\n=== SERIAL HISTOGRAM ===\n");
+printf("Creation time: %.6f seconds\n\n", time_serial);
+for (i = 0; i < bins; i++)
+{
+    printf("Bin %2d: %d\n", i, serial_hist[i]);
+}
+
 	/* Create a pool of num_threads workers and keep them in workers */
 	pthread_t *workers;
 	workers = (pthread_t *)malloc(sizeof(pthread_t) * num_threads);
     int thread_ids[num_threads];
 	double time_parallel = 0.0;
-	double sum_parallel = 0.0;
 	//Timer Begin
     clock_t begin, stop;
     
@@ -62,18 +72,31 @@ int main(int argc, char *argv[])
 	pthread_create(&workers[i], &attr, thread_func, &thread_ids[i]);
 	}
 
-	for (i = 0; i < num_threads; i++){
-		float *thread_result;
+	int parallel_hist[bins];
+	for (int i = 0; i < bins; i++) {
+    parallel_hist[i] = 0;
+	}
+
+	for (int i=0; i<num_threads; i++) {
+		int *thread_result;
+			
+		pthread_join(workers[i], (void**)&thread_result);
+    
+		for (int j = 0; j < bins; j++) {
+			parallel_hist[j] += thread_result[j];
+		}
 		
-		pthread_join(workers[i], (void**)&thread_result);  // get return value
-		sum_parallel += *thread_result;
+		free(thread_result); 
 	}
 	
 	//Timer End
     stop = clock();
     time_parallel = ((double) (stop - begin)) / CLOCKS_PER_SEC;
-	printf("Parallel Sum = %.3f, time = %.3f \n", sum_parallel, time_parallel);
-	/*free up resources properly */
+	printf("\n=== PARALLEL HISTOGRAM ===\n");
+printf("Creation time: %.6f seconds\n\n", time_parallel);
+for (i = 0; i < bins; i++) {
+    printf("Bin %2d: %d\n", i, parallel_hist[i]);
+}
     free(array);
 }
 
@@ -88,13 +111,18 @@ void *thread_func(void *arg) {
   	/* determine first and last rows of my strip */
   	first = my_id*strip_size;
   	last = first + strip_size - 1;
-/* Perform Partial Parallel Sum Here */
-	float *my_sum = malloc(sizeof(float));
-    *my_sum = 0.0;
-	for (int i = first; i <= last; i++) {
-		*my_sum += array[i];
-	}
-	printf("Thread %d sum = %f\n", my_id, *my_sum);
+/* Perform Partial Parallel histogram Here */
+	int *my_hist = calloc(bins, sizeof(int));
     
-	pthread_exit(my_sum);
+	for (int i = first; i <= last; i++) {
+        int bin = (int)(array[i] * bins);  
+ 
+        if (bin == bins) {
+            bin = bins - 1;
+        }
+
+  		my_hist[bin]++; 
+    } 
+    
+	pthread_exit(my_hist);
 }
