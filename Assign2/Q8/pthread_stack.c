@@ -4,8 +4,8 @@
 #include <stdlib.h>
      
 int num_threads = 0;
-int node_count = 0; //erik jobbade här
-pthread_mutex_t stack_mutex; //erik jobbade här
+int node_count = 0;  
+pthread_mutex_t stack_mutex;  
 
 typedef struct node { 
      int node_id;      //a unique ID assigned to each node
@@ -21,14 +21,14 @@ void push_mutex() {
      new_node = malloc(sizeof(Node));
      
      //update top of the stack below
-     pthread_mutex_lock(&stack_mutex); //erik jobbade här
-     old_node = top; //erik jobbade här
-     new_node->next = old_node; //erik jobbade här
+     pthread_mutex_lock(&stack_mutex);  
+     old_node = top;  
+     new_node->next = old_node;  
      //assign a unique ID to the new node
-     new_node->node_id = node_count++; //erik jobbade här
-     top = new_node; //erik jobbade här
-     printf("Pushed node id: %d\n", new_node->node_id); //erik jobbade här
-     pthread_mutex_unlock(&stack_mutex); //erik jobbade här
+     new_node->node_id = node_count++;  
+     top = new_node;  
+     printf("Pushed node id: %d\n", new_node->node_id);  
+     pthread_mutex_unlock(&stack_mutex);  
 }
 
 int pop_mutex() { 
@@ -36,22 +36,22 @@ int pop_mutex() {
      Node *new_node;
      
      //update top of the stack below
-     pthread_mutex_lock(&stack_mutex); //erik jobbade här
+     pthread_mutex_lock(&stack_mutex);  
 
-     if (top == NULL) { //erik jobbade här
-          pthread_mutex_unlock(&stack_mutex); //erik jobbade här
-          return -1; //erik jobbade här
+     if (top == NULL) {  
+          pthread_mutex_unlock(&stack_mutex);  
+          return -1;  
      }
 
-     old_node = top; //erik jobbade här
-     top = old_node->next; //erik jobbade här
+     old_node = top;  
+     top = old_node->next;  
 
-     pthread_mutex_unlock(&stack_mutex); //erik jobbade här
+     pthread_mutex_unlock(&stack_mutex);  
 
-     int old_node_id = old_node->node_id; //erik jobbade här
-     free(old_node); //erik jobbade här
-     printf("Pushed node id: %d\n", old_node_id); //erik jobbade här
-     return old_node_id; //erik jobbade här
+     int old_node_id = old_node->node_id;  
+     free(old_node);  
+     printf("Pushed node id: %d\n", old_node_id);  
+     return old_node_id;  
 }
 
 /*Option 2: Compare-and-Swap (CAS)*/
@@ -91,9 +91,9 @@ void *thread_func(int opt) {
 int main(int argc, char *argv[])
 {
      num_threads = atoi(argv[1]);
-     top = NULL; //erik jobbade här
-     node_count = 0; //erik jobbade här
-     pthread_mutex_init(&stack_mutex, NULL); //erik jobbade här
+     top = NULL;  
+     node_count = 0;  
+     pthread_mutex_init(&stack_mutex, NULL);  
 
 
      /* Option 1: Mutex */ 
@@ -101,10 +101,10 @@ int main(int argc, char *argv[])
      for (int i = 0; i < num_threads; i++) { 
           pthread_attr_t attr;
           pthread_attr_init(&attr);
-          pthread_create(&workers[i], &attr, thread_func, 0); //erik jobbade här
+          pthread_create(&workers[i], &attr, thread_func, 0);  
      }
      for (int i = 0; i < num_threads; i++) 
-          pthread_join(workers[i], NULL); //erik jobbade här
+          pthread_join(workers[i], NULL);  
 
      //Print out all remaining nodes in Stack
      printf("Mutex: Remaining nodes \n");

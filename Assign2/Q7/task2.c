@@ -15,11 +15,12 @@ int main(int argc, char *argv[])
 {
 	num_threads = atoi(argv[1]);
 /* Initialize an array of random values */
-	int array_size = 1000000;
+	int array_size = atoi(argv[2]);
+    srand((unsigned)time(NULL));
     strip_size = array_size/num_threads;
 	array = (float *)malloc(sizeof(float) * array_size);
 	for (int i = 0; i < array_size; i++) {
-		array [i] = rand() % 2;
+		array [i] = (double)rand() / RAND_MAX;
 	}
 /* Perform Serial Sum */
 	float sum_serial = 0.0;
@@ -28,6 +29,8 @@ int main(int argc, char *argv[])
     clock_t start, end;
 
 	int i;
+    int bins = 30;
+    int hist[bins];
 
     start = clock(); /* Master thread adding the array*/
 	for (i = 0; i < array_size; i++)
