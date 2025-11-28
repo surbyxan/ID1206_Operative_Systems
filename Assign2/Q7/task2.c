@@ -93,10 +93,10 @@ for (i = 0; i < bins; i++)
     stop = clock();
     time_parallel = ((double) (stop - begin)) / CLOCKS_PER_SEC;
 	printf("\n=== PARALLEL HISTOGRAM ===\n");
-printf("Creation time: %.6f seconds\n\n", time_parallel);
-for (i = 0; i < bins; i++) {
-    printf("Bin %2d: %d\n", i, parallel_hist[i]);
-}
+	printf("Creation time: %.6f seconds\n\n", time_parallel);
+	for (i = 0; i < bins; i++) {
+    	printf("Bin %2d: %d\n", i, parallel_hist[i]);
+	}
     free(array);
 }
 
