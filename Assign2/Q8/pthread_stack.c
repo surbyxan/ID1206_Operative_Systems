@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
      for (int i = 0; i < num_threads; i++) { 
           pthread_attr_t attr;
           pthread_attr_init(&attr);
-          pthread_create(&workers2[i], &attr, thread_func, &opt1);  
+          pthread_create(&workers2[i], &attr, thread_func, &opt2);  
      }
      for (int i = 0; i < num_threads; i++) 
           pthread_join(workers2[i], NULL);  
