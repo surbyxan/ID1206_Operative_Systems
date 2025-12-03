@@ -14,43 +14,44 @@ typedef struct page
     struct page *next;
     int total_references; // <-- Cooking!!!!
 } Page;
-
+struct Page *page_table[]; // flyttad från player thread func
 int reference_string[1000]; //tänker efter bör de vara en string type eller?
 pthread_mutex_t list_mutex;
 // @create an active list
-Node *active_list_head = NULL; //lagt in
-Node *active_list_tail = NULL; //lagt in
+Page *active_list_head = NULL; //lagt in
+Page *active_list_tail = NULL; //lagt in
 int active_list_counter = 0;
 // @create an inactive list
-Node *inactive_list_head = NULL; //lagt in
+Page *inactive_list_head = NULL; //lagt in
 
 
 void *player_thread_func()
 {
     // @Add code for player
-    Struct Page *page_table;
+    
     int i;
-    for(i < sizeof(reference_string); i++ ){
+    for(i=0; i < sizeof(reference_string); i++ ){
         pthread_mutex_lock(&list_mutex);
         int page_id = reference_string[i];
         Page *target_page = page_table[page_id];
         target_page -> reference_bit == 1;
 
         // MOVING SECTION
-        if(active_list_counter < round(0.7*n) ){ ///add to active list
+        if(active_list_counter < (0.7*n) ){ ///add to active list
             
             // add page to active list head
-            Page *temp = active_list_head
+            Page *temp = active_list_head;
             active_list_head = target_page;
             active_list_head -> next = temp;
             active_list_counter++;
-            pthread_mutex_unlock(&list_mutex);
+    
         }
         else{
             //add to inactive list
-            int move_count = round(active_list_counter*0.2);
+            int move_count = (active_list_counter*0.2);
             Page *chunk_start = active_list_head;
             Page *chunk_end = active_list_head;
+        
             for (int j = 0; j < move_count; j++){
                 chunk_end = chunk_end -> next;
             }
@@ -77,12 +78,12 @@ void *checker_thread_func()
 {
     while(player_finished == 0){
     // @Add code for checker
-        sleep(m/1000000) // Sleep for M microseconds
+        sleep(m/1000000); // Sleep for M microseconds
         pthread_mutex_lock(&list_mutex);
         Page *current_page = active_list_head;
          while(current_page != NULL){
             if(current_page->reference_bit == 1){
-                current_page->total_refernces++;
+                current_page->total_references++;
                 current_page->reference_bit = 0;
             }
             current_page = current_page->next;
@@ -102,9 +103,9 @@ int main(int argc, char *argv[])
     {
         reference_string[i] = rand() % n;
     }
-    Struct Page *current_page;
-    current_page.reference_bit = 0;
-    current_page.total_references = 0;
+    Page *current_page;
+    current_page->reference_bit = 0;
+    current_page->total_references = 0;
     /* Create two workers */
     pthread_mutex_init(&list_mutex, NULL);
     pthread_t player;
