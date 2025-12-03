@@ -46,7 +46,7 @@ void *player_thread_func()
             active_list_counter++;
             pthread_mutex_unlock(&list_mutex);
         }
-        else if(active_list_counter >= round(0.7*n)){
+        else{
             //add to inactive list
             int move_count = round(active_list_counter*0.2);
             Page *chunk_start = active_list_head;
@@ -55,19 +55,18 @@ void *player_thread_func()
                 chunk_end = chunk_end -> next;
             }
             Page *new_head = chunk_end -> next;
-            active list_head = new_head;
+            active_list_head = new_head;
 
             if (active_list_head == NULL){
                 active_list_tail = NULL;
             }
 
             chunk_end -> next = inactive_list_head;
+            Page *temp = inactive_list_head;
             inactive_list_head = chunk_start;
+            chunk_start -> next = temp;
             active_list_counter -= move_count;
 
-        }
-        else{
-            //evict from inactive list
         }
     }
     player_finished = 1;
