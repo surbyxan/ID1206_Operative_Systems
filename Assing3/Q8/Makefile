@@ -9,5 +9,5 @@ clean:
 
 run:
 	./task 64 20
-	./task 128 200
-	./task 256 2000
+	./task 64 200
+	./task 64 2000

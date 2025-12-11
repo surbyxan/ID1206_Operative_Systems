@@ -11,20 +11,18 @@ typedef struct page {
   int page_id;
   int reference_bit;
   struct page *next;
-  int total_references; // <-- Cooking!!!!
+  int total_references; 
 } Page;
-// used to be:
-// struct Page *page_table[]; // flyttad från player thread func
-Page *page_table[1000];     // flyttad från player thread func
-int reference_string[1000]; // tänker efter bör de vara en string type eller?
+
+Page *page_table[1000];     
+int reference_string[1000]; 
 pthread_mutex_t list_mutex;
 // @create an active list
-Page *active_list_head = NULL; // lagt in
-Page *active_list_tail = NULL; // lagt in
+Page *active_list_head = NULL; 
+Page *active_list_tail = NULL; 
 int active_list_counter = 0;
 // @create an inactive list
-Page *inactive_list_head = NULL; // lagt in
-
+Page *inactive_list_head = NULL; 
 int remove_from_list(Page **head, Page *node);
 
 void *player_thread_func(void *) {
@@ -70,10 +68,7 @@ void *player_thread_func(void *) {
         chunk_end = chunk_end->next;
       }
 
-      // old
-      // for (int j = 0; j < move_count; j++) {
-      //   chunk_end = chunk_end->next;
-      // }
+  
 
       Page *new_head = chunk_end->next;
       active_list_head = new_head;
@@ -97,7 +92,7 @@ void *player_thread_func(void *) {
 void *checker_thread_func(void *arg) {
   while (player_finished == 0) {
     // @Add code for checker
-    sleep(m / 1000000); // Sleep for M microseconds
+    sleep(m / 1000000); 
     pthread_mutex_lock(&list_mutex);
     Page *current_page = active_list_head;
     while (current_page != NULL) {
@@ -116,14 +111,11 @@ int main(int argc, char *argv[]) {
   n = atoi(argv[1]);
   m = atoi(argv[2]);
   // @create a random reference string of N
-  for (int i = 0; i < 1000; i++) // är detta rätt?
+  for (int i = 0; i < 1000; i++) 
   {
     reference_string[i] = rand() % n;
   }
-  // remove these?
-  // Page *current_page;
-  // current_page->reference_bit = 0;
-  // current_page->total_references = 0;
+
 
   // populate the page table list
   for (int i = 0; i < n; i++) {
@@ -147,7 +139,7 @@ int main(int argc, char *argv[]) {
   void print_list(Page * head) {
     Page *current = head;
     while (current != NULL) {
-      printf("%d", current->page_id);
+      printf("%d ", current->page_id);
       current = current->next;
     }
   }
