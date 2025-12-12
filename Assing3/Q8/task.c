@@ -83,7 +83,7 @@ void *player_thread_func(void *) {
       chunk_start->next = temp;
       active_list_counter -= move_count;
     }
-    // moved pthread unlock inside loop to prevent deadlock (was outsite before)
+
     pthread_mutex_unlock(&list_mutex);
   }
   player_finished = 1;
