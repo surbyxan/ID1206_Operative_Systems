@@ -30,6 +30,7 @@ void *player_thread_func(void *) {
 
   int i;
   for (i = 0; i < sizeof(reference_string) / sizeof(int); i++) {
+    usleep(10);
     pthread_mutex_lock(&list_mutex);
     int page_id = reference_string[i];
     Page *target_page = page_table[page_id];
@@ -92,7 +93,7 @@ void *player_thread_func(void *) {
 void *checker_thread_func(void *arg) {
   while (player_finished == 0) {
     // @Add code for checker
-    sleep(m / 1000000); 
+    usleep(m); 
     pthread_mutex_lock(&list_mutex);
     Page *current_page = active_list_head;
     while (current_page != NULL) {
@@ -149,9 +150,9 @@ int main(int argc, char *argv[]) {
     Page *p = page_table[i];
     printf("%d, %d\n", p->page_id, p->total_references);
   }
+  //@Print out the list of pages in active list
   printf("Pages in active list: \n");
   print_list(active_list_head);
-  //@Print out the list of pages in active list
 
   //@Print out the list of pages in inactive list
   printf("pages in inactive list:\n");
