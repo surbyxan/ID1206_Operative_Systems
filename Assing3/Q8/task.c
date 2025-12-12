@@ -143,6 +143,7 @@ int main(int argc, char *argv[]) {
       printf("%d ", current->page_id);
       current = current->next;
     }
+    printf("\n");
   }
   printf("Page_Id, Total_Referenced\n");
   //@Print out the statistics of page references
