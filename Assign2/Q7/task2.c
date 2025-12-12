@@ -49,11 +49,11 @@ int main(int argc, char *argv[])
     end = clock();
     time_serial = ((double) (end - start)) / CLOCKS_PER_SEC;
 	printf("\n=== SERIAL HISTOGRAM ===\n");
-printf("Creation time: %.6f seconds\n\n", time_serial);
-for (i = 0; i < bins; i++)
-{
+	printf("Creation time: %.6f seconds\n\n", time_serial);
+	for (i = 0; i < bins; i++)
+	{
     printf("Bin %2d: %d\n", i, serial_hist[i]);
-}
+	}
 
 	/* Create a pool of num_threads workers and keep them in workers */
 	pthread_t *workers;
