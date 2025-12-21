@@ -3,3 +3,4 @@ a.out
 *.log
 main.exe
 main.exe.stackdump
+.dat
