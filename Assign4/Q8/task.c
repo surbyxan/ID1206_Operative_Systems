@@ -28,25 +28,47 @@ int main() {
     if (pid == 0) {
         // Child process
 
-        memcpy(map_addr, "01234", 5);
+        memcpy(map_addr, "01234", 5); //this can also simply be done directly from map_addr+4096 in a for loop but this is cleaner
+
+        //char *child_message = "01234";
+        // for (int i = 0; i < 5; i++) {
+        //     map_addr[i] = child_message[i];
+        // }
+
+        msync(map_addr, FILE_SIZE, MS_SYNC);
 
         char buffer[5];
-        memcpy(buffer, map_addr+4096, 5);
+        memcpy(buffer, map_addr+4096, 5); //this can also simply be done directly from map_addr+4096 in a for loop but this is cleaner
+
+        // for (int i = 0; i < 5; i++) {
+        //     buffer[i] = map_addr[i+4096];
+        // }
 
         printf("Child Process ( PID: %d ); read from mmaped [4096]: %s\n",
                getpid(), buffer);
     } else {
         // Parent process
-        memcpy(map_addr+4096,"56789", 5);
+        memcpy(map_addr+4096,"56789", 5); //this can also simply be done directly from map_addr in a for loop but this is cleaner
+        msync(map_addr, FILE_SIZE, MS_SYNC);
+
+        //char *parent_message = "56789";
+        // for (int i = 0; i < 5; i++) {
+        //     map_addr[i+4096] = parent_message[i];
+        // }
+
+        wait(NULL);
 
         char buffer[5];
-        memcpy(buffer, map_addr, 5);
+        memcpy(buffer, map_addr, 5); //this can also simply be done directly from map_addr in a for loop but this is cleaner
+        
+        // for (int i = 0; i < 5; i++) {
+        //     buffer[i] = map_addr[i];
+        // }
 
         printf("Parent Process ( PID: %d ); read from mmaped [0]: %s\n",
                getpid(), buffer);
     }
 
-    munmap(map_addr, FILE_SIZE); // Unmap the memory
     close(fd);
 
     
